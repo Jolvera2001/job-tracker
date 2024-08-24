@@ -15,6 +15,8 @@ func main() {
 	// initializing outide connections
 	database.ConnectToMongoDB()
 	firebase.InitFirebase()
+
+	// router
 	router := gin.Default()
 
 	if err := router.Run(":8080"); err != nil {

@@ -32,5 +32,7 @@ func InitFirebase() (*firebase.App, *auth.Client, error) {
 		return nil, nil, err
 	}
 
+	log.Println("Established Auth Client with Firebase!")
+
 	return app, authClient, nil
 }
