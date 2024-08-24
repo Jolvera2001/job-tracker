@@ -13,8 +13,15 @@ func main() {
 	fmt.Println("Starting server...")
 
 	// initializing outide connections
-	database.ConnectToMongoDB()
-	firebase.InitFirebase()
+	if err := database.ConnectToMongoDB(); err != nil {
+		log.Fatalln("MongoDB Connection failed")
+		return
+	}
+
+	if err := firebase.InitFirebase(); err != nil {
+		log.Fatalln("Firebase app init failed")
+		return
+	}
 
 	// router
 	router := gin.Default()

@@ -11,10 +11,13 @@ import (
 	"google.golang.org/api/option"
 )
 
-func InitFirebase() (*firebase.App, *auth.Client, error) {
+var Firebase_App *firebase.App
+var Auth_Client *auth.Client
+
+func InitFirebase() error {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading dotenv")
-		return nil, nil, err
+		return err
 	}
 
 	creds := os.Getenv("AUTH_SECRET")
@@ -23,16 +26,19 @@ func InitFirebase() (*firebase.App, *auth.Client, error) {
 	app, err := firebase.NewApp(context.Background(), nil, options)
 	if err != nil {
 		log.Fatalln("Error starting Firebase app")
-		return nil, nil, err
+		return err
 	}
 
 	authClient, err := app.Auth(context.Background())
 	if err != nil {
 		log.Fatalln("Error starting Auth Client")
-		return nil, nil, err
+		return  err
 	}
 
 	log.Println("Established Auth Client with Firebase!")
 
-	return app, authClient, nil
+	Firebase_App = app
+	Auth_Client = authClient
+	
+	return nil
 }
