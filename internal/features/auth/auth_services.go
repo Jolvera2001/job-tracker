@@ -2,9 +2,10 @@ package auth
 
 import (
 	"firebase.google.com/go/auth"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterService(registerDto UserRegisterDto) (string, error) {
+func RegisterService(registerDto UserRegisterDto) (string, primitive.ObjectID, error) {
 	params := (&auth.UserToCreate{}).
 		Email(registerDto.Email).
 		Password(registerDto.Password)
@@ -16,6 +17,10 @@ func RegisterService(registerDto UserRegisterDto) (string, error) {
 	// return token, user object ID, and nil error
 }
 
-func LoginService(loginDto UserLoginDto) (string, error) {
+func LoginService(loginDto UserLoginDto) (string, primitive.ObjectID, error) {
+	// check for user record
+	// create custom token
+	// check for user object Id
 
+	// return token, user Object ID, and nil error
 }

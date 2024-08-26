@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,11 +22,12 @@ func RegisterHandler(c *gin.Context) {
 
 	}
 
-	// res, err := service.(registerDto) should contain token
-	// if err != nil {
-	// log err
-	//}
-	// c.JSON(http.StatusOK, gin.H{"Token": res})
+	token, id, err := RegisterService(registerDto)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Token": token, "Id": id})
 }
 
 func LoginHandler(c *gin.Context) {
@@ -34,9 +36,10 @@ func LoginHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 	}
 
-	// res, err := service.(loginDto) should contain token
-	// if err != nil {
-	// log err
-	//}
-	// c.JSON(http.StatusOK, gin.H{"Token": res})
+	token, id, err := LoginService(loginDto)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Token": token, "Id": id})
 }
