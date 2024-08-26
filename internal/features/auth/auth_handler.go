@@ -1,9 +1,11 @@
 package auth
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func AuthHandlers(r *gin.Engine) {
-	v1 := r.Group("api/v1/auth") 
+	v1 := r.Group("api/v1/auth")
 	{
 		v1.POST("/register", RegisterHandler)
 		v1.POST("/login", LoginHandler)
@@ -11,9 +13,9 @@ func AuthHandlers(r *gin.Engine) {
 }
 
 func RegisterHandler(c *gin.Context) {
-
+	c.JSON(200, gin.H{"Message": "You called the register handler!"})
 }
 
 func LoginHandler(c *gin.Context) {
-
+	c.JSON(200, gin.H{"Message": "You called the login handler!"})
 }
