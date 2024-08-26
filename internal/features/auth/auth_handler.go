@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,9 +15,28 @@ func AuthHandlers(r *gin.Engine) {
 }
 
 func RegisterHandler(c *gin.Context) {
-	c.JSON(200, gin.H{"Message": "You called the register handler!"})
+	var registerDto UserRegisterDto
+	if err := c.BindJSON(&registerDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+
+	}
+
+	// res, err := service.(registerDto) should contain token
+	// if err != nil {
+	// log err
+	//}
+	// c.JSON(http.StatusOK, gin.H{"Token": res})
 }
 
 func LoginHandler(c *gin.Context) {
-	c.JSON(200, gin.H{"Message": "You called the login handler!"})
+	var loginDto UserLoginDto
+	if err := c.BindJSON(&loginDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+	}
+
+	// res, err := service.(loginDto) should contain token
+	// if err != nil {
+	// log err
+	//}
+	// c.JSON(http.StatusOK, gin.H{"Token": res})
 }
