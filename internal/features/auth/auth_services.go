@@ -82,7 +82,7 @@ func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, err
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, errors.New("Status not OK")
+		return nil, errors.New("status not OK")
 	}
 
 	var registerResponse FirebaseApiResponse
@@ -115,7 +115,7 @@ func loginWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error)
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, errors.New("Status not OK")
+		return nil, errors.New("status not OK")
 	}
 
 	var loginResponse FirebaseApiResponse
