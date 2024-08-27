@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthHandlers(r *gin.Engine) {
+func GroupAuthHandlers(r *gin.Engine) {
 	v1 := r.Group("api/v1/auth")
 	{
 		v1.POST("/register", RegisterHandler)
@@ -25,6 +25,8 @@ func RegisterHandler(c *gin.Context) {
 	response, id, err := RegisterService(registerDto)
 	if err != nil {
 		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Auth response": response, "Id": id})
@@ -39,6 +41,8 @@ func LoginHandler(c *gin.Context) {
 	response, id, err := LoginService(loginDto)
 	if err != nil {
 		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Auth response": response, "Id": id})

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"job-tracker/internal/database"
 	"net/http"
 	"os"
@@ -61,7 +61,7 @@ func LoginService(loginDto UserLoginDto) (*FirebaseApiResponse, primitive.Object
 }
 
 func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error) {
-	creds := os.Getenv("AUTH_SECRET")
+	creds := os.Getenv("AUTH_API_KEY")
 	url := "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + creds
 
 	jsonData, err := json.Marshal(request)
@@ -77,7 +77,9 @@ func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, err
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, errors.New("status not OK")
+		var errorResponse map[string]interface{}
+		json.NewDecoder(response.Body).Decode(&errorResponse)
+		return nil, fmt.Errorf("status not OK: %s", errorResponse)
 	}
 
 	var registerResponse FirebaseApiResponse
@@ -90,7 +92,7 @@ func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, err
 }
 
 func loginWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error) {
-	creds := os.Getenv("AUTH_SECRET")
+	creds := os.Getenv("AUTH_API_KEY")
 	url := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + creds
 
 	jsonData, err := json.Marshal(request)
@@ -106,7 +108,9 @@ func loginWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error)
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, errors.New("status not OK")
+		var errorResponse map[string]interface{}
+		json.NewDecoder(response.Body).Decode(&errorResponse)
+		return nil, fmt.Errorf("status not OK: %s", errorResponse)
 	}
 
 	var loginResponse FirebaseApiResponse

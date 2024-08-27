@@ -29,7 +29,7 @@ func main() {
 	router := gin.Default()
 
 	// Handlers
-	auth.AuthHandlers(router)
+	auth.GroupAuthHandlers(router)
 
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
