@@ -24,7 +24,7 @@ func RegisterHandler(c *gin.Context) {
 
 	response, id, err := RegisterService(registerDto)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Auth response": response, "Id": id})
@@ -38,7 +38,7 @@ func LoginHandler(c *gin.Context) {
 
 	response, id, err := LoginService(loginDto)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Auth response": response, "Id": id})

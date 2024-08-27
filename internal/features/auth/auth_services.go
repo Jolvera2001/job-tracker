@@ -10,7 +10,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -44,8 +43,8 @@ func RegisterService(registerDto UserRegisterDto) (*FirebaseApiResponse, primiti
 
 func LoginService(loginDto UserLoginDto) (*FirebaseApiResponse, primitive.ObjectID, error) {
 	loginRequest := FirebaseApiRequest{
-		Email: loginDto.Email,
-		Password: loginDto.Password,
+		Email:             loginDto.Email,
+		Password:          loginDto.Password,
 		ReturnSecureToken: true,
 	}
 
@@ -62,10 +61,6 @@ func LoginService(loginDto UserLoginDto) (*FirebaseApiResponse, primitive.Object
 }
 
 func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error) {
-	if err := godotenv.Load(); err != nil {
-		return nil, err
-	}
-
 	creds := os.Getenv("AUTH_SECRET")
 	url := "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + creds
 
@@ -95,10 +90,6 @@ func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, err
 }
 
 func loginWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error) {
-	if err := godotenv.Load(); err != nil {
-		return nil, err
-	}
-
 	creds := os.Getenv("AUTH_SECRET")
 	url := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + creds
 
