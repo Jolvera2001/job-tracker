@@ -10,11 +10,10 @@ import (
 	"os"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterService(registerDto UserRegisterDto) (*FirebaseApiResponse, primitive.ObjectID, error) {
+func RegisterService(registerDto UserRegisterDto) (*FirebaseApiResponse, error) {
 	registerRequest := FirebaseApiRequest{
 		Email:             registerDto.Email,
 		Password:          registerDto.Password,
@@ -23,11 +22,13 @@ func RegisterService(registerDto UserRegisterDto) (*FirebaseApiResponse, primiti
 
 	response, err := registerWithFirebase(registerRequest)
 	if err != nil {
-		return nil, primitive.NilObjectID, err
+		return nil, err
 	}
 
+	userId := response.UID
 	newUser := UserModel{
 		ID:          primitive.NewObjectID(),
+		UserID:      userId,
 		Username:    registerDto.Username,
 		Email:       registerDto.Email,
 		DateCreated: primitive.NewDateTimeFromTime(time.Now()),
@@ -35,13 +36,13 @@ func RegisterService(registerDto UserRegisterDto) (*FirebaseApiResponse, primiti
 
 	_, err = database.GetCollection("Users").InsertOne(context.Background(), newUser)
 	if err != nil {
-		return nil, primitive.NilObjectID, err
+		return nil, err
 	}
 
-	return response, newUser.ID, nil
+	return response, nil
 }
 
-func LoginService(loginDto UserLoginDto) (*FirebaseApiResponse, primitive.ObjectID, error) {
+func LoginService(loginDto UserLoginDto) (*FirebaseApiResponse, error) {
 	loginRequest := FirebaseApiRequest{
 		Email:             loginDto.Email,
 		Password:          loginDto.Password,
@@ -50,14 +51,10 @@ func LoginService(loginDto UserLoginDto) (*FirebaseApiResponse, primitive.Object
 
 	response, err := loginWithFirebase(loginRequest)
 	if err != nil {
-		return nil, primitive.NilObjectID, err
+		return nil, err
 	}
 
-	var user UserModel
-	var filter = bson.M{"email": loginDto.Email}
-	err = database.GetCollection("Users").FindOne(context.Background(), filter).Decode(&user)
-
-	return response, user.ID, err
+	return response, nil
 }
 
 func registerWithFirebase(request FirebaseApiRequest) (*FirebaseApiResponse, error) {
