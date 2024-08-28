@@ -54,7 +54,18 @@ func UpdateUserService(c *gin.Context, update UserUpdateDto) (UserModel, error) 
 }
 
 func DeleteUserService(c *gin.Context) error {
+	verifiedToken, err := verifyToken(c)
+	if err != nil {
+		return err
+	}
 
+	filter := bson.M{"user_id": verifiedToken.UID}
+	_, err = database.GetCollection("Users").DeleteOne(context.Background(), filter)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func verifyToken(c *gin.Context) (*auth.Token, error) {
