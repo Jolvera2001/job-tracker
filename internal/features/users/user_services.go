@@ -65,6 +65,11 @@ func DeleteUserService(c *gin.Context) error {
 		return err
 	}
 
+	err = firebase.Auth_Client.DeleteUser(context.Background(), verifiedToken.UID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -74,15 +79,10 @@ func verifyToken(c *gin.Context) (*auth.Token, error) {
 		return nil, fmt.Errorf("token does not exist in current context")
 	}
 
-	token, ok := user.(string)
+	token, ok := user.(*auth.Token)
 	if !ok {
 		return nil, fmt.Errorf("current token is not compatible")
 	}
 
-	verifiedToken, err := firebase.Auth_Client.VerifyIDToken(context.Background(), token)
-	if err != nil {
-		return &auth.Token{}, err
-	}
-
-	return verifiedToken, err
+	return token, nil
 }
