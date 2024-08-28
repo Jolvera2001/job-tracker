@@ -2,35 +2,37 @@ package firebase
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 )
 
-func InitFirebase() (*firebase.App, *auth.Client, error) {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading dotenv")
-		return nil, nil, err
-	}
+var Firebase_App *firebase.App
+var Auth_Client *auth.Client
 
+func InitFirebase() error {
 	creds := os.Getenv("AUTH_SECRET")
 	options := option.WithCredentialsFile(creds)
 
 	app, err := firebase.NewApp(context.Background(), nil, options)
 	if err != nil {
-		fmt.Println("Error starting Firebase app")
-		return nil, nil, err
+		log.Fatalln("Error starting Firebase app")
+		return err
 	}
 
 	authClient, err := app.Auth(context.Background())
 	if err != nil {
-		fmt.Println("Error starting Auth Client")
-		return nil, nil, err
+		log.Fatalln("Error starting Auth Client")
+		return err
 	}
 
-	return app, authClient, nil
+	log.Println("Established Auth Client with Firebase!")
+
+	Firebase_App = app
+	Auth_Client = authClient
+
+	return nil
 }
