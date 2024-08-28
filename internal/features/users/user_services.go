@@ -33,19 +33,24 @@ func UpdateUserService(c *gin.Context, update UserUpdateDto) (UserModel, error) 
 		return UserModel{}, fmt.Errorf("issue with token verification")
 	}
 
-	var result UserModel
 	filter := bson.M{"user_id": verifiedToken.UID}
 	updateData, err := bson.Marshal(update)
 	if err != nil {
 		return UserModel{}, err
 	}
 
+	var result UserModel
 	var bsonUpdate bson.M
 	if err = bson.Unmarshal(updateData, &bsonUpdate); err != nil {
 		return UserModel{}, err
 	}
 
-	err = database.GetCollection("Users").FindOneAndUpdate(context.Background(), filter, bsonUpdate).Decode(&result)
+	_, err = database.GetCollection("Users").UpdateOne(context.Background(), filter, bson.M{"$set": bsonUpdate})
+	if err != nil {
+		return UserModel{}, err
+	}
+
+	err = database.GetCollection("Users").FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		return UserModel{}, err
 	}
