@@ -3,10 +3,12 @@ package users
 import (
 	"context"
 	"fmt"
+	"job-tracker/internal/database"
 	"job-tracker/internal/firebase"
 
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func GetUserService(c *gin.Context) (UserModel, error) {
@@ -25,10 +27,14 @@ func GetUserService(c *gin.Context) (UserModel, error) {
 		return UserModel{}, fmt.Errorf("Issue with token verification")
 	}
 
-	
+	filter := bson.M{"user_id": verifiedToken.UID}
+	var userToReturn UserModel
+	err = database.GetCollection("Users").FindOne(context.Background(), filter).Decode(&userToReturn)
+	if err != nil {
+		return UserModel{}, fmt.Errorf("Error finding user")
+	}
 
-	
-
+	return userToReturn, nil
 }
 
 func UpdateUserService() (UserModel, error) {
