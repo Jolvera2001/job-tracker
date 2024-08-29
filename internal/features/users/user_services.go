@@ -12,7 +12,7 @@ import (
 )
 
 func GetUserService(c *gin.Context) (UserModel, error) {
-	verifiedToken, err := verifyToken(c)
+	verifiedToken, err := extractToken(c)
 	if err != nil {
 		return UserModel{}, fmt.Errorf("issue with token verification")
 	}
@@ -28,7 +28,7 @@ func GetUserService(c *gin.Context) (UserModel, error) {
 }
 
 func UpdateUserService(c *gin.Context, update UserUpdateDto) (UserModel, error) {
-	verifiedToken, err := verifyToken(c)
+	verifiedToken, err := extractToken(c)
 	if err != nil {
 		return UserModel{}, fmt.Errorf("issue with token verification")
 	}
@@ -59,7 +59,7 @@ func UpdateUserService(c *gin.Context, update UserUpdateDto) (UserModel, error) 
 }
 
 func DeleteUserService(c *gin.Context) error {
-	verifiedToken, err := verifyToken(c)
+	verifiedToken, err := extractToken(c)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func DeleteUserService(c *gin.Context) error {
 	return nil
 }
 
-func verifyToken(c *gin.Context) (*auth.Token, error) {
+func extractToken(c *gin.Context) (*auth.Token, error) {
 	user, exists := c.Get("user")
 	if !exists {
 		return nil, fmt.Errorf("token does not exist in current context")
