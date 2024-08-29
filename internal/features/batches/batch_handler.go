@@ -61,15 +61,44 @@ func CreateBatchHandler(c *gin.Context) {
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"batch": response})
 }
 
 func UpdateBatchHandler(c *gin.Context) {
-	
+	var batchDto BatchUpdateDto
+	if err := c.BindJSON(&batchDto); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := UpdateBatchService(c, batchDto)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"update": response})
 }
 
 func DeleteBatchHandler(c *gin.Context) {
-	
+	var batchId primitive.ObjectID
+	if err := c.BindJSON(&batchId); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := DeleteBatchService(c, batchId)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }

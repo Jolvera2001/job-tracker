@@ -83,8 +83,8 @@ func CreateBatchService(c *gin.Context, newBatch BatchDto) (BatchModel, error) {
 	return res, nil
 }
 
-func UpdateBatchService(c *gin.Context, update BatchDto, batchId primitive.ObjectID) (BatchModel, error) {
-	filter := bson.M{"_id": batchId}
+func UpdateBatchService(c *gin.Context, update BatchUpdateDto) (BatchModel, error) {
+	filter := bson.M{"_id": update.ID}
 	updateDoc := bson.M{"$set": update}
 
 	_, err := database.GetCollection("Batches").UpdateOne(context.Background(), filter, updateDoc)
