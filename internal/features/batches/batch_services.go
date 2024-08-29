@@ -82,12 +82,33 @@ func CreateBatchService(c *gin.Context, newBatch BatchDto) (BatchModel, error) {
 	return res, nil
 }
 
-func UpdateBatchService(c *gin.Context, update BatchDto) (BatchModel, error) {
+func UpdateBatchService(c *gin.Context, update BatchDto, batchId primitive.ObjectID) (BatchModel, error) {
+	filter := bson.M{"_id": batchId}
+	updateDoc := bson.M{"$set": update}
 
+	_, err := database.GetCollection("Batches").UpdateOne(context.Background(), filter, updateDoc)
+	if err != nil {
+		return BatchModel{}, err
+	}
+
+	var res BatchModel
+	err = database.GetCollection("Batches").FindOne(context.Background(), filter).Decode(&res)
+	if err != nil {
+		return BatchModel{}, err
+	}
+
+	return res, nil
 }
 
-func DeleteBatchService(c *gin.Context, batchId primitive.ObjectID) (BatchModel, error) {
+func DeleteBatchService(c *gin.Context, batchId primitive.ObjectID) error {
+	filter := bson.M{"_id": batchId}
 
+	_, err := database.GetCollection("Batches").DeleteOne(context.Background(), filter)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func extractToken(c *gin.Context) (*auth.Token, error) {
