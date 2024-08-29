@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func GetBatchService(c *gin.Context, batchId primitive.ObjectID) (BatchModel, error) {
@@ -29,7 +30,32 @@ func GetBatchService(c *gin.Context, batchId primitive.ObjectID) (BatchModel, er
 }
 
 func GetBatchAllService(c *gin.Context) ([]BatchModel, error) {
+	token, err := extractToken(c)
+	if err != nil {
+		return []BatchModel{}, err
+	}
 
+	filter := bson.M{"user_id": token.UID}
+
+	var batchList []BatchModel
+	cur, err := database.GetCollection("Batches").Find(context.Background(), filter)
+	if err != nil {
+		return []BatchModel{}, err
+	}
+
+	// look into why this is being done
+	defer func() {
+		if closeError := cur.Close(context.Background()); closeError != nil {
+			err = closeError
+		}
+	}()
+
+	err = parseCursor(&batchList, cur)
+	if err != nil {
+		return []BatchModel{}, err
+	}
+
+	return batchList, err
 }
 
 func CreateBatchService(c *gin.Context, newBatch BatchDto) (BatchModel, error) {
@@ -56,4 +82,21 @@ func extractToken(c *gin.Context) (*auth.Token, error) {
 	}
 
 	return token, nil
+}
+
+func parseCursor(batchList *[]BatchModel, cursor *mongo.Cursor) error {
+	for cursor.Next(context.Background()) {
+		var batch BatchModel
+		if err := cursor.Decode(&batch); err != nil {
+			return err
+		}
+
+		*batchList = append(*batchList, batch)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
