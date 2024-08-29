@@ -13,15 +13,10 @@ import (
 )
 
 func GetBatchService(c *gin.Context, batchId primitive.ObjectID) (BatchModel, error) {
-	token, err := extractToken(c)
-	if err != nil {
-		return BatchModel{}, err
-	}
-
-	filter := bson.M{"user_id": token.UID, "_id": batchId}
+	filter := bson.M{"_id": batchId}
 
 	var batch BatchModel
-	err = database.GetCollection("Batches").FindOne(context.Background(), filter).Decode(&batch)
+	err := database.GetCollection("Batches").FindOne(context.Background(), filter).Decode(&batch)
 	if err != nil {
 		return BatchModel{}, err
 	}
@@ -59,7 +54,32 @@ func GetBatchAllService(c *gin.Context) ([]BatchModel, error) {
 }
 
 func CreateBatchService(c *gin.Context, newBatch BatchDto) (BatchModel, error) {
+	token, err := extractToken(c)
+	if err != nil {
+		return BatchModel{}, err
+	}
 
+	batchDoc := BatchModel{
+		ID: primitive.NewObjectID(),
+		UserId: token.UID,
+		Name: newBatch.Name,
+		DateCreated: primitive.NewDateTimeFromTime(time.Now()),
+	}
+
+	_, err = database.GetCollection("Batches").InsertOne(context.Background(), batchDoc)
+	if err != nil {
+		return BatchModel{}, err
+	}
+
+	var res BatchModel
+	filter := bson.M{"_id": batchDoc.ID}
+
+	err = database.GetCollection("Batches").FindOne(context.Background(), filter).Decode(&res)
+	if err != nil {
+		return BatchModel{}, err
+	}
+
+	return res, nil
 }
 
 func UpdateBatchService(c *gin.Context, update BatchDto) (BatchModel, error) {
