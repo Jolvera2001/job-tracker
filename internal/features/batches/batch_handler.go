@@ -31,7 +31,7 @@ func GetBatchHandler(c *gin.Context) {
 	response, err := GetBatchService(c, batchId)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -42,7 +42,7 @@ func GetBatchAllHandler(c *gin.Context) {
 	response, err := GetBatchAllService(c)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
@@ -50,7 +50,20 @@ func GetBatchAllHandler(c *gin.Context) {
 }
 
 func CreateBatchHandler(c *gin.Context) {
-	
+	var batchDto BatchDto
+	if err := c.BindJSON(&batchDto); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := CreateBatchService(c, batchDto)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"batch": response})
 }
 
 func UpdateBatchHandler(c *gin.Context) {
