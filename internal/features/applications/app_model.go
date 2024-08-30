@@ -10,4 +10,5 @@ type AppModel struct {
 	Description string             `json:"description" bson:"description"`
 	Status      string             `json:"status" bson:"status"`
 	RoundCount  int                `json:"round_count" bson:"round_count"`
+	DateCreated primitive.DateTime `json:"date_created" bson:"date_created"`
 }
