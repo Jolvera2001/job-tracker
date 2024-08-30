@@ -23,8 +23,6 @@ func GroupBatchHandlers(r *gin.Engine) {
 func GetBatchHandler(c *gin.Context) {
 	batchId := c.Param("batchId")
 
-	log.Println("Recieved BatchId: ", batchId)
-
 	id, err := primitive.ObjectIDFromHex(batchId)
 	if err != nil {
 		log.Println(err.Error())
