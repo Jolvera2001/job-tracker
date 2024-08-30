@@ -12,21 +12,23 @@ import (
 func GroupBatchHandlers(r *gin.Engine) {
 	v1 := r.Group("api/v1", middleware.AuthMiddleware())
 	{
-		v1.GET("/batch", GetBatchHandler)
+		v1.GET("/batch/:batchId", GetBatchHandler)
 		v1.GET("/batch/all", GetBatchAllHandler)
 		v1.POST("/batch", CreateBatchHandler)
 		v1.PUT("/batch", UpdateBatchHandler)
-		v1.DELETE("/batch", DeleteBatchHandler)
+		v1.DELETE("/batch/:batchId", DeleteBatchHandler)
 	}
 }
 
 func GetBatchHandler(c *gin.Context) {
 	batchId := c.Param("batchId")
 
+	log.Println("Recieved BatchId: ", batchId)
+
 	id, err := primitive.ObjectIDFromHex(batchId)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Arguments"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
