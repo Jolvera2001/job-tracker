@@ -8,19 +8,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetAppService(appId primitive.ObjectID) {
+func GetAppService(appId primitive.ObjectID) (AppModel, error) {
 
 }
 
-func GetAppAllService(batchId primitive.ObjectID) {
+func GetAppAllService(batchId primitive.ObjectID) ([]AppModel, error) {
 
 }
 
-func CreateAppService(appDto string) {
+func CreateAppService(appDto AppDto) (AppModel, error) {
 
 }
 
-func UpdateAppService(appDto string) {
+func UpdateAppService(appDto AppDto) (AppModel, error) {
 
 }
 
