@@ -1,21 +1,29 @@
 package applications
 
-func GetAppService() {
+import (
+	"fmt"
+
+	"firebase.google.com/go/auth"
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+func GetAppService(appId primitive.ObjectID) {
 
 }
 
-func GetAppAllService() {
+func GetAppAllService(batchId primitive.ObjectID) {
 
 }
 
-func CreateAppService() {
+func CreateAppService(appDto string) {
 
 }
 
-func UpdateAppService() {
+func UpdateAppService(appDto string) {
 
 }
 
-func DeleteAppService() {
+func DeleteAppService(appId primitive.ObjectID) {
 
 }
