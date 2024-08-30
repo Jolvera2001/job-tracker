@@ -13,7 +13,7 @@ func GroupApplicationHandlers(r *gin.Engine) {
 	v1 := r.Group("api/v1", middleware.AuthMiddleware())
 	{
 		v1.GET("/application/:appId", GetAppHandler)
-		v1.GET("/application/:batchId", GetAppAllHandler)
+		v1.GET("/application/all/:batchId", GetAppAllHandler)
 		v1.POST("/application", CreateAppHandler)
 		v1.PUT("/application", UpdateAppHandler)
 		v1.DELETE("/application/:appId", DeleteAppHandler)
