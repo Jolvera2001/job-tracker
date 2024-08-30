@@ -12,12 +12,12 @@ import (
 )
 
 func GetUserService(c *gin.Context) (UserModel, error) {
-	verifiedToken, err := verifyToken(c)
+	token, err := extractToken(c)
 	if err != nil {
 		return UserModel{}, fmt.Errorf("issue with token verification")
 	}
 
-	filter := bson.M{"user_id": verifiedToken.UID}
+	filter := bson.M{"user_id": token.UID}
 	var userToReturn UserModel
 	err = database.GetCollection("Users").FindOne(context.Background(), filter).Decode(&userToReturn)
 	if err != nil {
@@ -28,12 +28,12 @@ func GetUserService(c *gin.Context) (UserModel, error) {
 }
 
 func UpdateUserService(c *gin.Context, update UserUpdateDto) (UserModel, error) {
-	verifiedToken, err := verifyToken(c)
+	token, err := extractToken(c)
 	if err != nil {
 		return UserModel{}, fmt.Errorf("issue with token verification")
 	}
 
-	filter := bson.M{"user_id": verifiedToken.UID}
+	filter := bson.M{"user_id": token.UID}
 	updateData, err := bson.Marshal(update)
 	if err != nil {
 		return UserModel{}, err
@@ -59,18 +59,18 @@ func UpdateUserService(c *gin.Context, update UserUpdateDto) (UserModel, error) 
 }
 
 func DeleteUserService(c *gin.Context) error {
-	verifiedToken, err := verifyToken(c)
+	token, err := extractToken(c)
 	if err != nil {
 		return err
 	}
 
-	filter := bson.M{"user_id": verifiedToken.UID}
+	filter := bson.M{"user_id": token.UID}
 	_, err = database.GetCollection("Users").DeleteOne(context.Background(), filter)
 	if err != nil {
 		return err
 	}
 
-	err = firebase.Auth_Client.DeleteUser(context.Background(), verifiedToken.UID)
+	err = firebase.Auth_Client.DeleteUser(context.Background(), token.UID)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func DeleteUserService(c *gin.Context) error {
 	return nil
 }
 
-func verifyToken(c *gin.Context) (*auth.Token, error) {
+func extractToken(c *gin.Context) (*auth.Token, error) {
 	user, exists := c.Get("user")
 	if !exists {
 		return nil, fmt.Errorf("token does not exist in current context")

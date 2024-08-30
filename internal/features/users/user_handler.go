@@ -21,7 +21,7 @@ func GetUserHandler(c *gin.Context) {
 	response, err := GetUserService(c)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -39,7 +39,7 @@ func UpdateUserHandler(c *gin.Context) {
 	response, err := UpdateUserService(c, update)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -50,7 +50,7 @@ func DeleteUserHandler(c *gin.Context) {
 	err := DeleteUserService(c)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
