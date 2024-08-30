@@ -26,7 +26,7 @@ func GetAppHandler(c *gin.Context) {
 	id, err := primitive.ObjectIDFromHex(appId)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "issue with Id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "issue with Id"})
 		return
 	}
 
@@ -46,7 +46,7 @@ func GetAppAllHandler(c *gin.Context) {
 	id, err := primitive.ObjectIDFromHex(batchId)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "issue with Id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "issue with Id"})
 		return
 	}
 
@@ -61,13 +61,57 @@ func GetAppAllHandler(c *gin.Context) {
 }
 
 func CreateAppHandler(c *gin.Context) {
+	var appDto AppDto
+	if err := c.BindJSON(&appDto); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid parameters"})
+		return
+	}
 
+	res, err := CreateAppService(appDto)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal issue"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"application": res})
 }
 
 func UpdateAppHandler(c *gin.Context) {
+	var update AppModel
+	if err := c.BindJSON(&update); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid parameters"})
+		return
+	}
 
+	res, err := UpdateAppService(update)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal issue"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"application": res})
 }
 
 func DeleteAppHandler(c *gin.Context) {
+	appId := c.Param("appId")
 
+	id, err := primitive.ObjectIDFromHex(appId)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid parameters"})
+		return
+	}
+
+	err = DeleteAppService(id)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal issue"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
