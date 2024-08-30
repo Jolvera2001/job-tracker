@@ -21,12 +21,7 @@ func GroupBatchHandlers(r *gin.Engine) {
 }
 
 func GetBatchHandler(c *gin.Context) {
-	var batchId string
-	if err := c.BindJSON(&batchId); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Arguments"})
-		return
-	}
+	batchId := c.Param("batchId")
 
 	id, err := primitive.ObjectIDFromHex(batchId)
 	if err != nil {
@@ -93,12 +88,7 @@ func UpdateBatchHandler(c *gin.Context) {
 }
 
 func DeleteBatchHandler(c *gin.Context) {
-	var batchId string
-	if err := c.BindJSON(&batchId); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	batchId := c.Param("batchId")
 
 	id, err := primitive.ObjectIDFromHex(batchId)
 	if err != nil {
