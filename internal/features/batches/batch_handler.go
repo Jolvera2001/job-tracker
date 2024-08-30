@@ -21,14 +21,21 @@ func GroupBatchHandlers(r *gin.Engine) {
 }
 
 func GetBatchHandler(c *gin.Context) {
-	var batchId primitive.ObjectID
+	var batchId string
 	if err := c.BindJSON(&batchId); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Arguments"})
 		return
 	}
 
-	response, err := GetBatchService(c, batchId)
+	id, err := primitive.ObjectIDFromHex(batchId)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Arguments"})
+		return
+	}
+
+	response, err := GetBatchService(c, id)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -45,7 +52,7 @@ func GetBatchAllHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{"list": response})
 }
 
@@ -86,14 +93,21 @@ func UpdateBatchHandler(c *gin.Context) {
 }
 
 func DeleteBatchHandler(c *gin.Context) {
-	var batchId primitive.ObjectID
+	var batchId string
 	if err := c.BindJSON(&batchId); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := DeleteBatchService(c, batchId)
+	id, err := primitive.ObjectIDFromHex(batchId)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = DeleteBatchService(c, id)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
