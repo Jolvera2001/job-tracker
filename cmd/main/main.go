@@ -6,7 +6,9 @@ import (
 	"job-tracker/internal/firebase"
 	"log"
 
+	"job-tracker/internal/features/applications"
 	"job-tracker/internal/features/auth"
+	"job-tracker/internal/features/batches"
 	"job-tracker/internal/features/users"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +34,8 @@ func main() {
 	// Handlers
 	auth.GroupAuthHandlers(router)
 	users.GroupUserHandlers(router)
+	batches.GroupBatchHandlers(router)
+	applications.GroupApplicationHandlers(router)
 
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
