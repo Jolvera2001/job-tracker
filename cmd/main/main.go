@@ -32,7 +32,10 @@ func main() {
 	router := gin.Default()
 
 	// landing page
-	
+	router.LoadHTMLGlob("templates/*")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(200, "index.html", gin.H{"title": "Welcome!"})
+	})
 
 	// Handlers
 	auth.GroupAuthHandlers(router)
