@@ -31,6 +31,9 @@ func main() {
 	// Router
 	router := gin.Default()
 
+	// landing page
+	
+
 	// Handlers
 	auth.GroupAuthHandlers(router)
 	users.GroupUserHandlers(router)
