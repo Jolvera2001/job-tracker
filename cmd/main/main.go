@@ -30,6 +30,7 @@ func main() {
 
 	// Router
 	router := gin.Default()
+	router.SetTrustedProxies([]string{})
 
 	// landing page
 	router.LoadHTMLGlob("templates/*")
