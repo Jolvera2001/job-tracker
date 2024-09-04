@@ -21,7 +21,7 @@ func main() {
 
 	// Initializing outide connections
 	if err := database.ConnectToMongoDB(); err != nil {
-		log.Fatalln("MongoDB Connection failed")
+		log.Fatalln("MongoDB Connection failed: ", err.Error())
 		return
 	}
 
@@ -62,7 +62,7 @@ func main() {
 	applications.GroupApplicationHandlers(router)
 
 	log.Println("Setup successful")
-	
+
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
