@@ -42,6 +42,8 @@ func main() {
 		address = ":8080"
 	}
 
+	log.Println("Adress set to: ", address)
+
 	// Router
 	router := gin.New()
 
