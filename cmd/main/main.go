@@ -18,6 +18,7 @@ var Environment string
 
 func main() {
 	log.Println("Starting server...")
+	var address string
 
 	// Initializing outide connections
 	if err := database.ConnectToMongoDB(); err != nil {
@@ -35,8 +36,10 @@ func main() {
 
 	if environment == "release" {
 		gin.SetMode(gin.ReleaseMode)
+		address = "0.0.0.0:8080"
 	} else {
 		gin.SetMode(gin.DebugMode)
+		address = ":8080"
 	}
 
 	// Router
@@ -62,8 +65,9 @@ func main() {
 	applications.GroupApplicationHandlers(router)
 
 	log.Println("Setup successful")
+	log.Println("Running server on: ", address)
 
-	if err := router.Run(":8080"); err != nil {
+	if err := router.Run(address); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
