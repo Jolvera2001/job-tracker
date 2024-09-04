@@ -20,9 +20,8 @@ func ConnectToMongoDB() error {
 	if err := godotenv.Load(); err != nil {
 		log.Println(".env file not present...")
 	}
-	
+
 	uri := os.Getenv("MDB_STR")
-	log.Println(uri)
 
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
