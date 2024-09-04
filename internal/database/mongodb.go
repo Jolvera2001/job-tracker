@@ -18,8 +18,7 @@ var MongoClient *mongo.Client
 func ConnectToMongoDB() error {
 	uri := os.Getenv("MDB_STR")
 
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	clientOptions := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
+	clientOptions := options.Client().ApplyURI(uri)
 
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
