@@ -26,7 +26,7 @@ func main() {
 	}
 
 	if err := firebase.InitFirebase(); err != nil {
-		log.Fatalln("Firebase app init failed")
+		log.Fatalln("Firebase app init failed: ", err.Error())
 		return
 	}
 
