@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"job-tracker/internal/database"
 	"job-tracker/internal/firebase"
 	"log"
+	"os"
 
 	"job-tracker/internal/features/applications"
 	"job-tracker/internal/features/auth"
@@ -14,8 +14,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var Environment string
+
 func main() {
-	fmt.Println("Starting server...")
+	log.Println("Starting server...")
 
 	// Initializing outide connections
 	if err := database.ConnectToMongoDB(); err != nil {
@@ -28,8 +30,23 @@ func main() {
 		return
 	}
 
+	// checking environment
+	environment := os.Getenv("GO_ENV")
+
+	if environment == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
+
 	// Router
-	router := gin.Default()
+	router := gin.New()
+
+	// add default middleware
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
+	// trusted proxies
 	router.SetTrustedProxies([]string{})
 
 	// landing page
@@ -44,6 +61,8 @@ func main() {
 	batches.GroupBatchHandlers(router)
 	applications.GroupApplicationHandlers(router)
 
+	log.Println("Setup successful")
+	
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

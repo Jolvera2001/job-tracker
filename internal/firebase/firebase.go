@@ -2,6 +2,7 @@ package firebase
 
 import (
 	"context"
+	"encoding/base64"
 	"log"
 	"os"
 
@@ -14,24 +15,43 @@ var Firebase_App *firebase.App
 var Auth_Client *auth.Client
 
 func InitFirebase() error {
-	creds := os.Getenv("AUTH_SECRET")
-	options := option.WithCredentialsFile(creds)
+	var firebaseApp *firebase.App
+	var options option.ClientOption
+	var ctx = context.Background()
 
-	app, err := firebase.NewApp(context.Background(), nil, options)
-	if err != nil {
-		log.Fatalln("Error starting Firebase app")
-		return err
+	environment := os.Getenv("GO_ENV")
+
+	if environment == "release" {
+		jsonBytes, err := base64.StdEncoding.DecodeString(os.Getenv("FIREBASE_B64"))
+		if err != nil {
+			log.Fatalln("Error decoding base64 string!")
+		}
+		options = option.WithCredentialsJSON(jsonBytes)
+
+		firebaseApp, err = firebase.NewApp(ctx, nil, options)
+		if err != nil {
+			log.Fatalln("Error starting Firebase app")
+			return err
+		}
+	} else {
+		var err error
+		creds := os.Getenv("AUTH_SECRET")
+		options = option.WithCredentialsFile(creds)
+
+		firebaseApp, err = firebase.NewApp(ctx, nil, options)
+		if err != nil {
+			log.Fatalln("Error starting Firebase app")
+			return err
+		}
 	}
 
-	authClient, err := app.Auth(context.Background())
+	authClient, err := firebaseApp.Auth(ctx)
 	if err != nil {
 		log.Fatalln("Error starting Auth Client")
 		return err
 	}
 
-	log.Println("Established Auth Client with Firebase!")
-
-	Firebase_App = app
+	Firebase_App = firebaseApp
 	Auth_Client = authClient
 
 	return nil
