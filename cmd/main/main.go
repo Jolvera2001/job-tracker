@@ -64,7 +64,7 @@ func main() {
 	auth.GroupAuthHandlers(router)
 	users.GroupUserHandlers(router)
 	batches.GroupBatchHandlers(router)
-	applications.GroupApplicationHandlers(router)
+		applications.GroupApplicationHandlers(router)
 
 	log.Println("Setup successful")
 	log.Println("Running server on: ", address)
