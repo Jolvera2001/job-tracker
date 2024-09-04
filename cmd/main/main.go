@@ -4,7 +4,6 @@ import (
 	"job-tracker/internal/database"
 	"job-tracker/internal/firebase"
 	"log"
-	"os"
 
 	"job-tracker/internal/features/applications"
 	"job-tracker/internal/features/auth"
@@ -18,7 +17,6 @@ var Environment string
 
 func main() {
 	log.Println("Starting server...")
-	var address string
 
 	// Initializing outide connections
 	if err := database.ConnectToMongoDB(); err != nil {
@@ -31,28 +29,12 @@ func main() {
 		return
 	}
 
-	// checking environment
-	environment := os.Getenv("GO_ENV")
-
-	if environment == "release" {
-		gin.SetMode(gin.ReleaseMode)
-		address = "0.0.0.0:8080"
-	} else {
-		gin.SetMode(gin.DebugMode)
-		address = ":8080"
-	}
-
-	log.Println("Address set to: ", address)
-
 	// Router
 	router := gin.New()
 
 	// add default middleware
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-
-	// trusted proxies
-	router.SetTrustedProxies([]string{"0.0.0.0/0"})
 
 	// landing page
 	router.LoadHTMLGlob("templates/*")
@@ -67,9 +49,9 @@ func main() {
 	applications.GroupApplicationHandlers(router)
 
 	log.Println("Setup successful")
-	log.Println("Running server on: ", address)
+	log.Println("Running server on: 0.0.0.0:8080")
 
-	if err := router.Run(address); err != nil {
+	if err := router.Run("0.0.0.0:8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
