@@ -5,24 +5,19 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const(
+const (
 	DbName = "Main"
 )
 
 var MongoClient *mongo.Client
 
 func ConnectToMongoDB() error {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading dotenv")
-		return err
-	}
 	uri := os.Getenv("MDB_STR")
-	
+
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 
