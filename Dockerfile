@@ -11,4 +11,7 @@ RUN go build -v -o /run-app ./cmd/main/.
 FROM debian:bookworm
 
 COPY --from=builder /run-app /usr/local/bin/
+COPY --from=builder /usr/src/app/templates /usr/src/app/templates
+WORKDIR /usr/src/app
+
 CMD ["run-app"]
