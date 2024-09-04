@@ -47,7 +47,7 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// trusted proxies
-	router.SetTrustedProxies([]string{})
+	router.SetTrustedProxies([]string{"0.0.0.0/0"})
 
 	// landing page
 	router.LoadHTMLGlob("templates/*")
