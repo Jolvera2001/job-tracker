@@ -1,20 +1,37 @@
-FROM golang:latest AS builder
+# Start from the official Go 1.22 image
+FROM golang:1.22-alpine AS builder
 
-WORKDIR /workspace
+# Set the working directory inside the container
+WORKDIR /app
 
+# Copy go mod and sum files
 COPY go.mod go.sum ./
 
+# Download all dependencies
 RUN go mod download
 
+# Copy the source code into the container
 COPY . .
 
-RUN go build -o /output-binary ./cmd/main
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/main
 
-FROM scratch
+# Start a new stage from scratch
+FROM alpine:latest  
 
-COPY --from=builder /output-binary /output-binary
+RUN apk --no-cache add ca-certificates
 
-WORKDIR /app
+WORKDIR /root/
+
+# Copy the pre-built binary file from the previous stage
+COPY --from=builder /app/main .
+
+# Copy static files and templates
+COPY --from=builder /app/static ./static
+COPY --from=builder /app/templates ./templates
+
+# Expose port 8080 to the outside world
 EXPOSE 8080
 
-ENTRYPOINT [ "/app/output-binary" ]
+# Command to run the executable
+CMD ["./main"]
