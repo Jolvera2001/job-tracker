@@ -19,6 +19,7 @@ func ConnectToMongoDB() error {
 	uri := os.Getenv("MDB_STR")
 
 	clientOptions := options.Client().ApplyURI(uri)
+	clientOptions.SetTLSConfig(nil)
 
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
