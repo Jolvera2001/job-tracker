@@ -37,7 +37,6 @@ func ConnectToMongoDB() error {
 	}
 
 	MongoClient = client
-	log.Println("Connected to MongoDB!")
 
 	return nil
 }
