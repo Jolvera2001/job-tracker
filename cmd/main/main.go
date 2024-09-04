@@ -4,6 +4,7 @@ import (
 	"job-tracker/internal/database"
 	"job-tracker/internal/firebase"
 	"log"
+	"os"
 
 	"job-tracker/internal/features/applications"
 	"job-tracker/internal/features/auth"
@@ -11,23 +12,38 @@ import (
 	"job-tracker/internal/features/users"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
-
-var Environment string
 
 func main() {
 	log.Println("Starting server...")
 
-	// Initializing outide connections
-	if err := database.ConnectToMongoDB(); err != nil {
-		log.Fatalln("MongoDB Connection failed: ", err.Error())
-		return
+	if err := godotenv.Load(); err != nil {
+		log.Println(".env file not present...")
 	}
 
-	if err := firebase.InitFirebase(); err != nil {
-		log.Fatalln("Firebase app init failed: ", err.Error())
-		return
+	environment := os.Getenv("GO_ENV")
+	var address string
+
+	if environment == "release" {
+		address = "0.0.0.0:8080"
+	} else {
+		address = ":8080"
 	}
+
+
+	// Initializing outide connections
+	go func() {
+		if err := database.ConnectToMongoDB(); err != nil {
+			log.Fatalln("MongoDB Connection failed: ", err.Error())
+			return
+		}
+	
+		if err := firebase.InitFirebase(); err != nil {
+			log.Fatalln("Firebase app init failed: ", err.Error())
+			return
+		}
+	}()
 
 	// Router
 	router := gin.New()
@@ -49,9 +65,9 @@ func main() {
 	applications.GroupApplicationHandlers(router)
 
 	log.Println("Setup successful")
-	log.Println("Running server on: 0.0.0.0:8080")
+	log.Println("Running server on: ", address)
 
-	if err := router.Run("0.0.0.0:8080"); err != nil {
+	if err := router.Run(address); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }

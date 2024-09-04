@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -17,10 +16,6 @@ const (
 var MongoClient *mongo.Client
 
 func ConnectToMongoDB() error {
-	if err := godotenv.Load(); err != nil {
-		log.Println(".env file not present...")
-	}
-
 	uri := os.Getenv("MDB_STR")
 
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
