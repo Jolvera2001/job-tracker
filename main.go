@@ -27,8 +27,10 @@ func main() {
 
 	if environment == "release" {
 		address = "0.0.0.0:8080"
+		gin.SetMode(gin.ReleaseMode)
 	} else {
 		address = ":8080"
+		gin.SetMode(gin.DebugMode)
 	}
 
 
@@ -47,6 +49,7 @@ func main() {
 
 	// Router
 	router := gin.New()
+	router.SetTrustedProxies([]string{})
 
 	// add default middleware
 	router.Use(gin.Logger())
