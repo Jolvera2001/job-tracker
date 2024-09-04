@@ -1,6 +1,6 @@
 FROM golang:latest AS builder
 
-WORKDIR /app
+WORKDIR /workspace
 
 COPY go.mod go.sum ./
 
@@ -12,7 +12,7 @@ RUN go build -o output-binary ./cmd/main
 
 FROM scratch
 
-COPY --from=builder /app/output-binary /app/output-binary
+COPY --from=builder /output-binary /output-binary
 
 WORKDIR /app
 EXPOSE 8080
