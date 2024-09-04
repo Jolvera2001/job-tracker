@@ -27,7 +27,6 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # Copy static files and templates
-COPY --from=builder /app/static ./static
 COPY --from=builder /app/templates ./templates
 
 # Expose port 8080 to the outside world
