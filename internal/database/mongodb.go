@@ -22,7 +22,7 @@ func ConnectToMongoDB() error {
 	}
 
 	clientOptions := options.Client().ApplyURI(uri)
-	clientOptions.SetTLSConfig(nil)
+	//clientOptions.SetTLSConfig(nil)
 
 	// attempting connection
 	log.Println("Attempting to connect to mongodb...")
@@ -32,7 +32,7 @@ func ConnectToMongoDB() error {
 	}
 
 	log.Println("Pinging Mongodb...")
-	err = client.Ping(context.TODO(), nil)
+	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		return err
 	}
